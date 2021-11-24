@@ -1,0 +1,208 @@
+create database WIKI;
+USE WIKI;
+
+
+/*==============================================================*/
+/* Table: DENUNCIAS                                             */
+/*==============================================================*/
+create table DENUNCIAS 
+(
+   IDPERSONA            integer                        null,
+   IDDENUNCIAS          integer                        null,
+   DESCRIPCION          varchar(100)                   null
+);
+
+/*==============================================================*/
+/* Table: DIRECTORIO                                            */
+/*==============================================================*/
+create table DIRECTORIO 
+(
+   IDDIRECTORIO         char(10)                       not null,
+   IDPERSONA            integer                        null,
+   constraint PK_DIRECTORIO primary key clustered (IDDIRECTORIO)
+);
+
+/*==============================================================*/
+/* Table: EVENTO                                                */
+/*==============================================================*/
+create table EVENTO 
+(
+   IDEVENTO             integer                        not null,
+   IDPERSONA            integer                        null,
+   NOMBRE               varchar(100)                   null,
+   DESCRIPCION          varchar(100)                   null,
+   FECHA                date                           null,
+   DURACION             integer                        null,
+   LUGAR                char(100)                      null,
+   INVITADOS            varchar(200)                   null,
+   constraint PK_EVENTO primary key clustered (IDEVENTO)
+);
+
+/*==============================================================*/
+/* Table: FEED                                                  */
+/*==============================================================*/
+create table FEED 
+(
+   IDFEET               integer                        not null,
+   IDPOST               integer                        null,
+   IDTIPFEED            integer                        null,
+   constraint PK_FEED primary key clustered (IDFEET)
+);
+
+/*==============================================================*/
+/* Table: GRUPOS                                                */
+/*==============================================================*/
+create table GRUPOS 
+(
+   IDGRUPO              integer                        not null,
+   IDPERFIL             integer                        null,
+   IDTIPGRUPO           integer                        null,
+   IMAGRUPO             long binary                    null,
+   NOMGRUPO             varchar(50)                    null,
+   DESCGRUPO            varchar(200)                   null,
+   TIPOGRUPO            smallint                       null,
+   constraint PK_GRUPOS primary key clustered (IDGRUPO)
+);
+
+/*==============================================================*/
+/* Table: HISTORIAS                                             */
+/*==============================================================*/
+create table HISTORIAS 
+(
+   IDPOST               integer                        null,
+   IDHISTORIAS          char(10)                       not null,
+   DESCRHISTORIA        char(10)                       null,
+   constraint PK_HISTORIAS primary key clustered (IDHISTORIAS)
+);
+
+/*==============================================================*/
+/* Table: PERFIL                                                */
+/*==============================================================*/
+create table PERFIL 
+(
+   IDPERFIL             integer                        not null,
+   IDPERSONA            integer                        null,
+   IMGPERFIL            varchar(100)                   null,
+   NOMCARGO             varchar(100)                   null,
+   HOBBIES              varchar(100)                   null,
+   GUSTOS               varchar(100)                   null,
+   constraint PK_PERFIL primary key clustered (IDPERFIL)
+);
+
+/*==============================================================*/
+/* Table: PERSONA                                               */
+/*==============================================================*/
+create table PERSONA 
+(
+   IDPERSONA            integer                        not null,
+   NOMBRES              varchar(100)                   null,
+   APELLIDOS            varchar(100)                   null,
+   CORREO               varchar(100)                   null,
+   CONTRASENA           varchar(20)                    null,
+   TIPODOC              varchar(10)                    null,
+   constraint PK_PERSONA primary key clustered (IDPERSONA)
+);
+
+/*==============================================================*/
+/* Table: POST                                                  */
+/*==============================================================*/
+create table POST 
+(
+   IDPOST               integer                        not null,
+   IDPERSONA            integer                        null,
+   FECHA                date                           null,
+   VIDEO                long binary                    null,
+   IMAGEN               long binary                    null,
+   DESCRIPCION          varchar(200)                   null,
+   constraint PK_POST primary key clustered (IDPOST)
+);
+
+/*==============================================================*/
+/* Table: REUNION_STREAMING                                     */
+/*==============================================================*/
+create table REUNIONSTREAMING 
+(
+   IDSTREMM             integer                        not null,
+   IDDIRECTORIO         integer                        null,
+   constraint PK_REUNION_STREAMING primary key clustered (IDSTREMM)
+);
+
+/*==============================================================*/
+/* Table: TIPO_FEED                                             */
+/*==============================================================*/
+create table TIPOFEED 
+(
+   IDTIPFEED            integer                        not null,
+   NOMBRE               varchar(200)                         null,
+   constraint PK_TIPOFEED primary key clustered (IDTIPFEED)
+);
+
+/*==============================================================*/
+/* Table: TIPO_GRUPO                                            */
+/*==============================================================*/
+create table TIPOGRUPO 
+(
+   IDTIPGRUPO           integer                        not null,
+   NOMBRE               integer                        null,
+   constraint PK_TIPO_GRUPO primary key clustered (IDTIPGRUPO)
+);
+
+alter table DENUNCIAS
+   add constraint FK_DENUNCIA_REFERENCE_PERSONA foreign key (IDPERSONA)
+      references PERSONA (IDPERSONA)
+      on update restrict
+      on delete restrict;
+
+alter table DIRECTORIO
+   add constraint FK_DIRECTOR_REFERENCE_PERSONA foreign key (IDPERSONA)
+      references PERSONA (IDPERSONA)
+      on update restrict
+      on delete restrict;
+
+alter table EVENTO
+   add constraint FK_EVENTO_REFERENCE_PERSONA foreign key (IDPERSONA)
+      references PERSONA (IDPERSONA)
+      on update restrict
+      on delete restrict;
+
+alter table FEED
+   add constraint FK_FEED_REFERENCE_POST foreign key (IDPOST)
+      references POST (IDPOST)
+      on update restrict
+      on delete restrict;
+
+alter table GRUPOS
+   add constraint FK_GRUPOS_REFERENCE_PERFIL foreign key (IDPERFIL)
+      references PERFIL (IDPERFIL)
+      on update restrict
+      on delete restrict;
+
+alter table GRUPOS
+   add constraint FK_GRUPOS_REFERENCE_TIPO_GRU foreign key (IDTIPGRUPO)
+      references TIPO_GRUPO (IDTIPGRUPO)
+      on update restrict
+      on delete restrict;
+
+alter table HISTORIAS
+   add constraint FK_HISTORIA_REFERENCE_POST foreign key (IDPOST)
+      references POST (IDPOST)
+      on update restrict
+      on delete restrict;
+
+alter table PERFIL
+   add constraint FK_PERFIL_REFERENCE_PERSONA foreign key (IDPERSONA)
+      references PERSONA (IDPERSONA)
+      on update restrict
+      on delete restrict;
+
+alter table POST
+   add constraint FK_POST_REFERENCE_PERSONA foreign key (IDPERSONA)
+      references PERSONA (IDPERSONA)
+      on update restrict
+      on delete restrict;
+
+alter table REUNION_STREAMING
+   add constraint FK_REUNION__REFERENCE_DIRECTOR foreign key (IDDIRECTORIO)
+      references DIRECTORIO (IDDIRECTORIO)
+      on update restrict
+      on delete restrict;
